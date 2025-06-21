@@ -44,7 +44,6 @@ router.get("/:source/:recipe_id", async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
     const { source, recipe_id } = req.params;
-    console.log("recipe_id from params:", recipe_id);
 
     let recipe;
 
@@ -93,7 +92,7 @@ router.get("/favorites", async (req, res, next) => {
     let family_recipes = [];
 
     if (api_recipes_ids.length > 0) {
-        api_recipes = await Promise.all(api_recipes_ids.map((id) => recipes_utils.getRecipeDetails(id))
+        api_recipes = await Promise.all(api_recipes_ids.map((id) => recipes_utils.getRecipeDetails(id,user_id))
   );
     }
 

@@ -15,10 +15,12 @@ app.use(
     cookieName: "session", // the cookie key name
     //secret: process.env.COOKIE_SECRET, // the encryption key
     secret: "template", // the encryption key
-    duration: 24 * 60 * 60 * 1000, // expired after 20 sec
-    activeDuration: 1000 * 60 * 5, // if expiresIn < activeDuration,
+    duration: 1000 * 60 * 60 * 24, // 1 day
+    activeDuration: 1000 * 60 * 5, // 5 minutes
     cookie: {
       httpOnly: false,
+      sameSite: "none", // for cross-origin cookies
+      secure: true, // for cross-origin cookies, set to true if using https
     }
     //the session will be extended by activeDuration milliseconds
   })
@@ -39,16 +41,14 @@ app.get("/",function(req,res)
 
 });
 
-// app.use(cors());
-// app.options("*", cors());
+app.use(cors({
+  origin: (origin, callback) => callback(null, true), 
+  credentials: true,                                 
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
-// const corsConfig = {
-//   origin: true,
-//   credentials: true
-// };
-
-// app.use(cors(corsConfig));
-// app.options("*", cors(corsConfig));
+app.options("*", cors());
 
 var port = process.env.PORT || "80"; //local=3000 remote=80
 //#endregion

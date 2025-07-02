@@ -135,6 +135,7 @@ async function getRandomRecipes(number) {
 }
 
 async function searchRecipes(userId, query, filters = {}, number = 5) {
+  console.log(" in recipe utils user id = ", userId);
   const { results } = await spoonacularRequest("/complexSearch", {
     query,
     number,
@@ -144,7 +145,8 @@ async function searchRecipes(userId, query, filters = {}, number = 5) {
     intolerances : filters.intolerances,
     sort         : filters.sortBy === "time" ? "readyInMinutes" : undefined,
   });
-
+  console.log("searchRecipes called with userId:", userId, "query:", query, "filters:", filters, "number:", number);
+  console.log("Search results:", results);
   return Promise.all(results.map(r =>
     buildPreview(r, { userId, source: "api" })
   ));

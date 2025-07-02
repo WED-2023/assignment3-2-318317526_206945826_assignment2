@@ -6,7 +6,7 @@ router.get("/", (req, res) => res.send("im here"));
 
 router.get("/random", async (req, res, next) => {
   try {
-    console.log("Fetching random recipes");
+    console.log("Req ssession = ", req.session);
     const randomRecipes = await recipes_utils.getRandomRecipes(3);
     res.status(200).send(randomRecipes);
   } catch (error) {
@@ -31,7 +31,10 @@ router.get("/search", async (req, res, next) => {
 
     const filters = { cuisine, diet, intolerances, sortBy };
     
-    const user_id = req.session.user_id;
+    const user_id = req.user_id;
+    console.log("in Recipes user_id = ", user_id);
+
+
 
     const results = await recipes_utils.searchRecipes(user_id, query, filters, number);
 
@@ -51,7 +54,7 @@ router.get("/search", async (req, res, next) => {
  */
 router.get("/:recipeId", async (req, res, next) => {
   try {
-    const recipe = await recipes_utils.getRecipeDetails(req.params.recipeId);
+    const recipe = await recipes_utils.getAllRecipeDetails(req.params.recipeId);
     res.send(recipe);
   } catch (error) {
     next(error);

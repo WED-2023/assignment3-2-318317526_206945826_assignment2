@@ -6,7 +6,6 @@ router.get("/", (req, res) => res.send("im here"));
 
 router.get("/random", async (req, res, next) => {
   try {
-    console.log("Req ssession = ", req.session);
     const randomRecipes = await recipes_utils.getRandomRecipes(3);
     res.status(200).send(randomRecipes);
   } catch (error) {

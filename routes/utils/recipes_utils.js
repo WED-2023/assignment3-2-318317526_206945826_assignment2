@@ -65,32 +65,43 @@ async function getRecipeFlags(userId, source, recipeId) {
 /**
  * Build a unified “preview” object and auto-attach favorite / viewed flags when context is given.
  */
-async function buildPreview(src,{ userId = null, source = null, extras = {} } = {})
- {
-  const {
+async function buildPreview(src, { userId = null, source = null, extras = {} } = {}) {
+  let {
     recipe_id,
     id,
     title,
     image,
     readyInMinutes,
-    vegan       = false,
-    vegetarian  = false,
-    glutenFree  = false,
+    vegan = false,
+    vegetarian = false,
+    glutenFree = false,
   } = src;
 
+  // If some fields are missing, try to fetch from Spoonacular
+  if ((!title || !image || !readyInMinutes) && source === "api") {
+    const info = await getRecipeInformation(recipe_id ?? id);
+    const data = info.data || info; // handle both axios and direct object
+    title = title || data.title;
+    image = image || data.image;
+    readyInMinutes = readyInMinutes || data.readyInMinutes;
+    vegan = vegan || data.vegan;
+    vegetarian = vegetarian || data.vegetarian;
+    glutenFree = glutenFree || data.glutenFree;
+  }
+
   const preview = {
-    id            : recipe_id ?? id,
+    id: recipe_id ?? id,
     title,
     image,
     readyInMinutes,
-    vegan         : !!vegan,
-    vegetarian    : !!vegetarian,
-    glutenFree    : !!glutenFree,
-    favorite      : false,
-    viewed        : false,
+    vegan: !!vegan,
+    vegetarian: !!vegetarian,
+    glutenFree: !!glutenFree,
+    favorite: false,
+    viewed: false,
     ...extras,
   };
-  console.log("buildPreview called with userId:", userId, "source:", source, "recipeId:", preview.id);
+
   if (userId && source) {
     Object.assign(preview, await getRecipeFlags(userId, source, preview.id));
   }
@@ -135,7 +146,6 @@ async function getRandomRecipes(number) {
 }
 
 async function searchRecipes(userId, query, filters = {}, number = 5) {
-  console.log(" in recipe utils user id = ", userId);
   const { results } = await spoonacularRequest("/complexSearch", {
     query,
     number,

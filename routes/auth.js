@@ -68,9 +68,19 @@ router.post("/Login", async (req, res, next) => {
 });
 
 router.post("/Logout", function (req, res) {
-  console.log("session user_id Logout: " + req.session.user_id);
-  req.session.reset(); // reset the session info --> send cookie when  req.session == undefined!!
-  res.send({ success: true, message: "logout succeeded" });
+  try {
+    console.log("session user_id Logout: " + req.session.user_id);
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Error destroying session:", err);
+        return res.status(500).send({ success: false, message: "Logout failed" });
+      }
+      res.send({ success: true, message: "logout succeeded" });
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+    res.status(500).send({ success: false, message: "Logout failed" });
+  }
 });
 
 module.exports = router;

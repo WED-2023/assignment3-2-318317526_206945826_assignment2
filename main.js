@@ -63,6 +63,17 @@ app.use(express.static(
   path.join(__dirname, '../assignment3_3-frontend-main/dist')
 ));
 
+/* ----- Catch-all route for frontend SPA ----- */
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "../assignment3_3-frontend-main/dist",
+      "index.html"
+    )
+  );
+});
+
 /* ----- Default error-handler ----- */
 app.use((err, _req, res, _next) => {
   console.error(err);

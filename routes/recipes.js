@@ -31,9 +31,6 @@ router.get("/search", async (req, res, next) => {
     const filters = { cuisine, diet, intolerances, sortBy };
     
     const user_id = req.user_id;
-    console.log("in Recipes user_id = ", user_id);
-
-
 
     const results = await recipes_utils.searchRecipes(user_id, query, filters, number);
 

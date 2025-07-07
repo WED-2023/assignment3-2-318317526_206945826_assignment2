@@ -99,6 +99,7 @@ async function buildPreview(src, { userId = null, source = null, extras = {} } =
     glutenFree: !!glutenFree,
     favorite: false,
     viewed: false,
+    source: source, // Include the source in the preview object
     ...extras,
   };
 
@@ -290,7 +291,7 @@ async function addFamilyRecipe(user_id, recipeData) {
   await DButils.execQuery(query);
 }
 
-async function getAllFamilyPreviewRecipes(recipe_id = null, user_id) {
+async function getAllFamilyPreviewRecipes(user_id, recipe_id = null) {
   let query = `
     SELECT recipe_id, title, image, readyInMinutes, vegan, vegetarian, glutenFree, when_to_prepare, owner_name
     FROM family_recipes
@@ -299,9 +300,7 @@ async function getAllFamilyPreviewRecipes(recipe_id = null, user_id) {
   if (recipe_id) {
     query += ` AND recipe_id = '${recipe_id}'`;
   }
-
   const recipes = await DButils.execQuery(query);
-
   if (recipe_id) {
     if (recipes.length === 0) return [];
     const r = recipes[0];
